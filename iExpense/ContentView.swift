@@ -13,8 +13,6 @@ struct ContentView: View {
     @StateObject var expenses = Expenses()
     @State private var showingAddExpense = false
     
-    @State private var types: [String] = ["Personal", "Business"]
-    
     func amountSymbols(amount: Double) -> some View {
         var count = 0
         
@@ -34,15 +32,6 @@ struct ContentView: View {
         }
     }
     
-    func getTypes() {
-        var typesLocal = Set<String>()
-        for item in expenses.items {
-            typesLocal.insert(item.type)
-        }
-        
-        types = typesLocal.sorted()
-    }
-    
     func countItems(of type: String) -> Int {
         var cnt = 0
         for item in expenses.items {
@@ -52,7 +41,6 @@ struct ContentView: View {
     }
     
     func expenseRows(expenses: Expenses, type: String) -> some View {
-//        return Text("Hello")
         
         return ForEach(expenses.items) {item in
             if item.type == type {
@@ -76,13 +64,11 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(types, id: \.self) {type in
-                    if countItems(of: type) > 0 {
-                        Section {
-                            expenseRows(expenses: expenses, type: type)
-                        } header: {
-                            Text(type)
-                        }
+                ForEach(expenses.itemTypes, id: \.self) {type in
+                    Section {
+                        expenseRows(expenses: expenses, type: type)
+                    } header: {
+                        Text(type)
                     }
                 }
             }
@@ -99,14 +85,11 @@ struct ContentView: View {
             AddView(expenses: expenses)
         }
         .onAppear {
-            getTypes()
-            print(types)
         }
     }
     
     func removeItems(at offsets: IndexSet) {
         expenses.items.remove(atOffsets: offsets)
-        getTypes()
     }
 }
 

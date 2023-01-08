@@ -16,6 +16,17 @@ class Expenses : ObservableObject {
         }
     }
     
+    var itemTypes: [String] {
+        var types = [String]()
+        
+        for item in items {
+            if types.firstIndex(of: item.type) == nil {
+                types.append(item.type)
+            }
+        }
+        return types
+    }
+    
     init() {
         if let savedItems = UserDefaults.standard.data(forKey: "Items") {
             if let decodedItems = try? JSONDecoder().decode([ExpenseItem].self, from: savedItems) {
